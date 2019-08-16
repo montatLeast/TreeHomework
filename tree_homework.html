@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link type="text/css" rel="stylesheet" href="ext-3.3.0/resources/css/ext-all.css" />
+    <link type="text/css" rel="stylesheet" href="css/icon.css" />
+    <script language="javascript" src="ext-3.3.0/adapter/ext/ext-base.js"></script>
+    <script language="javascript" src="ext-3.3.0/ext-all.js"></script>
+    <script language="javascript" src="ext-3.3.0/src/locale/ext-lang-zh_CN.js"></script>
+
+    <script type="text/javascript">
+        Ext.onReady(function () {
+            var chose_node = null;
+            var new_tree_node = null;
+
+            var menu = new Ext.menu.Menu({
+                items: [
+                    {
+                        id: 'add',
+                        text: 'Add'
+                    }, {
+                        id: 'delete',
+                        text: 'Delete'
+                    }
+                ],
+                listeners: {
+                    itemclick: function (item) {
+                        switch (item.id) {
+                            case 'delete':
+                                if (chose_node.isLeaf()) {
+                                    chose_node.remove();
+                                } else {
+                                    if (!chose_node.hasChildNodes()) {
+                                        chose_node.remove();
+                                    } else { Ext.Msg.alert("警告！", "你不能删除有学生的班级"); }
+                                }
+                                break;
+                            case 'add':
+                                addANode();
+                                break;
+                        }
+                    }
+                }
+            });
+
+            var tree = new Ext.tree.TreePanel({
+                region: 'west',
+                title:'TreePanel',
+                width: 300,
+                enableDD: true,
+                loader: new Ext.tree.TreeLoader({ dataUrl: 'json/tree.json' }),
+                root: new Ext.tree.AsyncTreeNode({ text: 'OOCL', iconCls: 'company' }),
+                listeners: {
+                    contextmenu: function (node, e) {
+                        e.preventDefault();
+                        var treeContextMenu = node.getOwnerTree().contextMenu;
+                        node.select();
+                        menu.showAt(e.getXY());
+                    },
+                    'click': function (node) {
+                        if (!node.isLeaf()) {
+                            node.expand();
+                        }
+                        chose_node = node;
+                    }
+                },
+            });
+
+            var panel = new Ext.Panel({
+                renderTo: 'test',
+                title:'BorderLayout',
+                layout: 'border',
+                width: 600,
+                height: 400,
+                items: [tree, {
+                    region: 'center',
+                    title:'InputPanel',
+                    xtype:'form',
+                    defaults:{
+                        
+                    },
+                    items: [
+                        {
+                            id: 'content',
+                            xtype: 'field',
+                            fieldLabel:'name'
+                        }, {
+                            id: 'submit',
+                            xtype: 'button',
+                            text: 'submit'
+                        }
+                    ]
+                }
+
+                ]
+            });
+
+            var treeFilter = new Ext.tree.TreeFilter(tree, {
+                clearBlank: true,
+                autoClear: true
+            })
+
+            Ext.fly('submit').on('click', function () {
+                addANode();
+            });
+
+            var addANode = function () {
+                if (chose_node == null) {
+                    Ext.Msg.alert("警告！", "还未选中任何公司或班级");
+                    return;
+                }
+                let text = Ext.getCmp('content').getValue();
+                if (text == null) {
+                    text = 'new Node';
+                }
+                if (chose_node.isLeaf()) {
+                    chose_node = chose_node.parentNode;
+                }
+                if (chose_node.parentNode == null) {
+                    new_tree_node = new Ext.tree.TreeNode({ text: text, iconCls: 'class_OOCL' });
+                } else {
+                    new_tree_node = new Ext.tree.TreeNode({ text: text, iconCls: 'student', leaf: true });
+                }
+                chose_node.appendChild(new_tree_node);
+            }
+
+            var treeEditor = new Ext.tree.TreeEditor(tree, { allowBlank: false }, {
+                listeners: {
+                    complete: function (editor, currVal, origVal) {
+                        Ext.Msg.alert('提示', '您已将改名称从 ' + origVal + ' 改为 ' + currVal);
+                    }
+                }
+            });
+        });
+
+    </script>
+
+</head>
+
+<style type="text/css">
+</style>
+
+<body>
+
+    <div id="test"></div>
+</body>
+
+</html>
