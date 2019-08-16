@@ -1,0 +1,27 @@
+.country{
+    background-image: url(../icon/country.png) !important;
+}
+
+.company{
+    background-image: url(../icon/company.png) !important;
+}
+
+.province{
+    background-image: url(../icon/province.png) !important;
+}
+
+.class_OOCL{
+    background-image: url(../icon/class.png) !important;
+}
+
+.city{
+    background-image: url(../icon/city.png) !important;
+}
+
+.student{
+    background-image: url(../icon/student.png) !important;
+}
+
+.red span{
+    color: red !important; 
+}

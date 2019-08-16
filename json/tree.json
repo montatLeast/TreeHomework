@@ -1,0 +1,24 @@
+[
+    {
+        "id": 1,
+        "text": "Bering",
+        "children":[
+            
+        ]
+    },
+    {
+        "id": 2,
+        "text": "Gibraltar",
+        "children": [
+            {
+                "id": 3,
+                "text": "Joshua",
+                "leaf": true
+            },{
+                "id": 4,
+                "text": "Bill",
+                "leaf": true
+            }
+        ]
+    }
+]
